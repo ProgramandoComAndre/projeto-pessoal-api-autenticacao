@@ -1,0 +1,26 @@
+{
+  "name": "projeto-pessoal-api-autenticacao",
+  "version": "1.0.0",
+  "description": "Esta API explora conceitos de RESTFul API e desenvolvimento backend e boas práticas",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ProgramandoComAndre/projeto-pessoal-api-autenticacao.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ProgramandoComAndre/projeto-pessoal-api-autenticacao/issues"
+  },
+  "homepage": "https://github.com/ProgramandoComAndre/projeto-pessoal-api-autenticacao#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "express": "^5.1.0",
+    "express-jsdoc-swagger": "^1.8.0",
+    "express-validator": "^7.2.1"
+  }
+}
