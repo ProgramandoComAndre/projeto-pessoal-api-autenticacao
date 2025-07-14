@@ -1,6 +1,7 @@
 const User = require("../models/User");
 
 class InMemoryUserRepository {
+
     constructor() {
         this.items = []
     }
@@ -11,6 +12,13 @@ class InMemoryUserRepository {
      */
     async insertUser(user) {
         this.items.push(user)
+    }
+    async findUserByEmail(email) {
+        const index = this.items.findIndex(x=> x.email === email)
+        if(index == -1) {
+            return undefined
+        }
+        return this.items[index]
     }
 }
 

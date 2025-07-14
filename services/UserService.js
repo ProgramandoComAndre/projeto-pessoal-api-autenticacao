@@ -1,10 +1,11 @@
-const { BadRequestException } = require("../common/HttpExceptions");
+const { BadRequestException, ConflictException } = require("../common/HttpExceptions");
 const User = require("../models/User");
 
 class UserService {
     /**
      * @typedef {object} IUserRepository
      * @property {(user:User) => Promise<void>} insertUser
+     * @property {(email:string)=> Promise<User>} findUserByEmail
      */
     /**
      * @typedef {object} IHashService
@@ -35,6 +36,11 @@ class UserService {
     async registerUser(registerUserDto) {
         if(registerUserDto.password < 8) {
             throw new BadRequestException("password must have at least 8 characters")
+        }
+
+        const userExists = await this.userRepository.findUserByEmail(registerUserDto.email)
+        if(userExists) {
+            throw new ConflictException(`User with ${registerUserDto.email} already exists`)
         }
         registerUserDto.password = await this.hashService.hash(registerUserDto.password)
         console.log(registerUserDto.password)

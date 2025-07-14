@@ -32,6 +32,11 @@ const userController = new UserController(new UserService(new InMemoryUserReposi
  * @property {string} name.required - Name
  * @property {string} email.required - Email
  */
+
+/**
+ * @typedef {object} ErrorMessage
+ * @property {string} message.required Message
+ */
 /**
  * POST /api/users
  * @tags User
@@ -39,6 +44,7 @@ const userController = new UserController(new UserService(new InMemoryUserReposi
  * @summary Registers a new user
  * @returns {RegisterUserResponse} 200 - User Registered Successfully
  * @returns {ValidationErrors} 400 - Invalid parameters
+ * @returns {ErrorMessage} 409 - User Already exists
  */
 router.post("/", body("email", "Invalid Email").isEmail(), body("name", "Name must have at least 1 character").isLength({
     min: 1

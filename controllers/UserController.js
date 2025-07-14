@@ -1,4 +1,4 @@
-const { BadRequestException } = require("../common/HttpExceptions")
+const { BadRequestException, ConflictException } = require("../common/HttpExceptions")
 const {users} = require("../db/db")
 const User = require("../models/User")
 const {matchedData, validationResult} = require('express-validator')
@@ -47,6 +47,9 @@ class UserController {
         }
          catch(ex) {
             if(ex instanceof BadRequestException) {
+                return res.status(ex.statusCode).json({message: ex.message})
+            }
+            else if(ex instanceof ConflictException) {
                 return res.status(ex.statusCode).json({message: ex.message})
             }
             else if(ex instanceof Error){

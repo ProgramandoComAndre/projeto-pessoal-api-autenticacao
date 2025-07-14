@@ -6,4 +6,12 @@ class BadRequestException extends Error {
     }
 }
 
-module.exports = { BadRequestException }
+class ConflictException extends Error {
+    constructor(message) {
+        super(message)
+        this.name = "ConflictException"
+        this.statusCode = 409
+    }
+}
+
+module.exports = { BadRequestException, ConflictException }
