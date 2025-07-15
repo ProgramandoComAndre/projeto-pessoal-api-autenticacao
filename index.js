@@ -7,6 +7,7 @@ const { JsonWebTokenError } = require('jsonwebtoken');
 const JwtTokenService = require('./services/ITokenService.js');
 const UserService = require('./services/UserService.js');
 const AuthService = require('./services/AuthService.js');
+const AuthGuard = require('./controllers/middleware/AuthGuard.js');
 const options = {
   info: {
     version: '1.0.0',
@@ -48,6 +49,7 @@ DependencyInjectionUtil.addDependency("hashService", BcryptHashService)
 DependencyInjectionUtil.addDependency("tokenService", JwtTokenService)
 DependencyInjectionUtil.addDependency("userService", UserService)
 DependencyInjectionUtil.addDependency("authService", AuthService)
+DependencyInjectionUtil.addDependency("authGuard", AuthGuard)
 
 app.use(express.json())
 app.use("/api/users", require("./routes/UserRouter.js"))

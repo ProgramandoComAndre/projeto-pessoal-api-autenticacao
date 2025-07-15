@@ -25,6 +25,19 @@ class InMemoryUserRepository {
         }
         return this.items[index]
     }
+
+    /**
+     * 
+     * @param {string} id 
+     * @returns {User}
+     */
+    async findUserById(id) {
+        const index = this.items.findIndex(x=> x.id === id)
+        if(index == -1) {
+            return undefined
+        }
+        return this.items[index]
+    }
 }
 
 module.exports = { InMemoryUserRepository}

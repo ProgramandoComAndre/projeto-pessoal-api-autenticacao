@@ -1,5 +1,5 @@
 const { BadRequestException, NotFoundException, UnauthorizedException } = require("./HttpExceptions")
-const {users} = require("../db/db")
+const {users} = require("./db/db")
 const User = require("../models/User")
 const {matchedData, validationResult} = require('express-validator')
 class AuthController {
@@ -20,6 +20,7 @@ class AuthController {
     /**
      * @typedef {object} IAuthService
      * @property {(user: LoginRequest) => Promise<LoginResponse>} login
+     * @property {(id:string) => Promise<{id: string,name: string,email:string}>} myProfile
      */
     /**
      * 
@@ -68,6 +69,25 @@ class AuthController {
             }
          }
         }
+    }
+
+     myProfile() {
+        return async (req, res) => {
+
+            try {
+                const {id} = req.user
+                const user = await this.authService.myProfile(id)
+                const result = {id: user.id, name: user.name, email: user.email}
+                return res.status(200).json(result)
+            }
+            catch(error) {
+                if(error instanceof NotFoundException) {
+                    return res.status(error.statusCode).json({message: error.message})
+                }
+                return res.status(500).json({message: "Internal Server Error", details: error.message})
+            }
+
+        } 
     }
 }
 
