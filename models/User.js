@@ -1,5 +1,5 @@
 const Email = require("../common/email-validation")
-const { BadRequestException } = require("../common/HttpExceptions")
+const { BadRequestException } = require("../controllers/HttpExceptions")
 
 module.exports = class User {
     /**

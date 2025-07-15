@@ -1,4 +1,4 @@
-const { BadRequestException, ConflictException } = require("../common/HttpExceptions");
+const { BadRequestException, ConflictException } = require("../controllers/HttpExceptions");
 const User = require("../models/User");
 
 class UserService {
@@ -16,7 +16,7 @@ class UserService {
      * @param {IUserRepository} userRepository
      * @param {IHashService} hashService
      */
-    constructor(userRepository, hashService) {
+    constructor({userRepository, hashService} = {}) {
        this.userRepository = userRepository
        this.hashService = hashService
     }

@@ -1,19 +1,32 @@
-const { BadRequestException, ConflictException } = require("./HttpExceptions")
+const { BadRequestException, NotFoundException, UnauthorizedException } = require("./HttpExceptions")
 const {users} = require("../db/db")
 const User = require("../models/User")
 const {matchedData, validationResult} = require('express-validator')
-class UserController {
+class AuthController {
 
     /**
-     * @typedef {object} IUserService
-     * @property {(user: {name:string, email:string, password: string}) => Promise<void>} registerUser
+     * @typedef {object} LoginRequest
+     * @property {string} email
+     * @property {string} Password
+     */
+
+    /**
+     * @typedef {object} LoginResponse
+     * @property {string} id
+     * @property {string} name
+     * @property {string} email
+     * @property {string} token
+     */
+    /**
+     * @typedef {object} IAuthService
+     * @property {(user: LoginRequest) => Promise<LoginResponse>} login
      */
     /**
      * 
-     * @param {IUserService} userService
+     * @param {IAuthService} authService
      */
-    constructor(userService) {
-        this.userService = userService
+    constructor(authService) {
+        this.authService = authService
     }
 
 /**
@@ -32,24 +45,22 @@ class UserController {
      * @returns {Object} Express middleware function that handles user registration
      * and sends a JSON response with a success message.
      */
-    registerUser() {
+    login() {
         return async(req, res) => {
             try {
-            const result = validationResult(req)
-            if(!result.isEmpty())
-                return res.status(400).json({errors: result.array()})
-            const data = matchedData(req);
-            const newUser = User.create(data)
-            await this.userService.registerUser(newUser)
-            const registerUserResponse = {id: newUser.id, name: newUser.name, email: newUser.email}
-            return res.status(200).json(registerUserResponse)
+            const { email, password } = req.body
+            const loginResponse = await this.authService.login({email, password})
+            return res.status(200).json(loginResponse)
            
         }
          catch(ex) {
             if(ex instanceof BadRequestException) {
                 return res.status(ex.statusCode).json({message: ex.message})
             }
-            else if(ex instanceof ConflictException) {
+            else if(ex instanceof NotFoundException) {
+                return res.status(ex.statusCode).json({message: ex.message})
+            }
+            else if(ex instanceof UnauthorizedException) {
                 return res.status(ex.statusCode).json({message: ex.message})
             }
             else if(ex instanceof Error){
@@ -60,4 +71,4 @@ class UserController {
     }
 }
 
-module.exports = UserController
+module.exports = AuthController

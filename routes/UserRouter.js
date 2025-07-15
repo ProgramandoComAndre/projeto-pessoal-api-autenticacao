@@ -1,10 +1,9 @@
 const UserController = require("../controllers/UserController")
 const {body}= require("express-validator");
-const { InMemoryUserRepository } = require("../repositories/UserRepository");
-const BcryptHashService = require("../services/IHashService");
-const UserService = require("../services/UserService");
+const DependencyInjectionUtil = require("../common/DependencyInjection");
 const router = require("express").Router()
-const userController = new UserController(new UserService(new InMemoryUserRepository(), new BcryptHashService()));
+const userService = DependencyInjectionUtil.getDependency("userService")
+const userController = new UserController(userService);
 
 /**
  * @typedef {object} ValidationError
