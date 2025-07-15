@@ -55,6 +55,14 @@ class AuthService {
         const token = await this.tokenService.sign(userExists.id)
         return { id: userExists.id, name: userExists.name, email: userExists.email, token}
     }
+    
+    async myProfile(id) {
+        const user = await this.userRepository.findUserById(id)
+        if(!user) {
+            throw new NotFoundException(`User ${id} not found `)
+        }
+        return {id: user.id, name: user.name, email: user.email}
+    }
 }
 
 module.exports = AuthService

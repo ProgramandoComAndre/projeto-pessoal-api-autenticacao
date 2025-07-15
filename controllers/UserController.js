@@ -1,5 +1,5 @@
 const { BadRequestException, ConflictException } = require("./HttpExceptions")
-const {users} = require("../db/db")
+const {users} = require("./db/db")
 const User = require("../models/User")
 const {matchedData, validationResult} = require('express-validator')
 class UserController {
