@@ -1,5 +1,5 @@
 const { BadRequestException, ConflictException } = require("../controllers/HttpExceptions");
-const User = require("../models/User");
+const { User } = require("../models/User");
 
 class UserService {
     /**
@@ -43,9 +43,9 @@ class UserService {
             throw new ConflictException(`User with ${registerUserDto.email} already exists`)
         }
         registerUserDto.password = await this.hashService.hash(registerUserDto.password)
-        console.log(registerUserDto.password)
         const user = User.create(registerUserDto)
         await this.userRepository.insertUser(user)
+        return user
     }
 }
 
