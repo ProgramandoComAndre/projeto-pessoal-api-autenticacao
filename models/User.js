@@ -59,6 +59,13 @@ const userSchema = new EntitySchema(
                 type: "text",
                 nullable: false
             }
+         },
+         relations: {
+            blacklistToken: {
+                target: "BlacklistToken",
+                type: "one-to-many",
+                inverseSide: "Users"
+            }
          }
     }
 )

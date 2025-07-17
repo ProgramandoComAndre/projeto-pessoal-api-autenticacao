@@ -38,6 +38,11 @@ class AuthGuard {
             }
             const tokenPayload = await this.tokenService.verify(req.headers.authorization.replace("Bearer ", "").trim() || "")
             // validar se o token está na blacklist
+
+            const isRevoked = await this.tokenService.isRevoked(tokenPayload.jti)
+            if(isRevoked) {
+                throw new UnauthorizedException("Token is revoked");
+            }
             req.user = tokenPayload
             next()
            }

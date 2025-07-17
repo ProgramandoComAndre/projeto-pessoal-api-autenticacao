@@ -47,4 +47,15 @@ router.post("/",authController.login())
  * @security BearerAuth
  */
 router.get("/profile", authGuard.auth(), authController.myProfile())
+
+/**
+ * DELETE /api/auth
+ * @tags Auth
+ * @summary Get user profile by token
+ * @returns {LoginResponse} 200 - User Found
+ * @returns {ErrorMessage} 400 - Already had logout
+ * @returns {ErrorMessage} 401 - Invalid Token!, Expired Token!
+ * @security BearerAuth
+ */
+router.delete("/", authGuard.auth(), authController.logout())
 module.exports = router

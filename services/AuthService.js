@@ -4,8 +4,9 @@ const {User} = require("../models/User")
 
 class AuthService {
     /**
-     * @typedef {object}ITokenService
+     * @typedef {object} ITokenService
      * @property {(id: string) => string} sign
+     * @property {(tokenData: any) => Promise<bool>} invalidateToken
      */
     /**
      * @typedef {object} IUserRepository
@@ -17,11 +18,17 @@ class AuthService {
      * @property {(value: string) => Promise<string>} hash
      * @property {(value: string, hashValue) => Promise<boolean>} compare
      */
+
+    /**
+     * @typedef {object} Service
+     * @property {IUserRepository} userRepository
+     * @property {IHashService} hashService
+     * @property {ITokenService} tokenService
+     */
+
     /**
      * 
-     * @param {IUserRepository} userRepository
-     * @param {IHashService} hashService
-     * @param {ITokenService} tokenService
+     * @param {Service} param0 
      */
     constructor({userRepository, hashService, tokenService} = {}) {
        this.userRepository = userRepository
@@ -62,6 +69,11 @@ class AuthService {
             throw new NotFoundException(`User ${id} not found `)
         }
         return {id: user.id, name: user.name, email: user.email}
+    }
+
+    async logout(tokenData) {
+        const result = await this.tokenService.invalidateToken(tokenData)
+        return result 
     }
 }
 

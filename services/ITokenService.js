@@ -1,14 +1,39 @@
 const jwt = require('jsonwebtoken')
 const crypto = require("crypto")
-const { UnauthorizedException } = require('../controllers/HttpExceptions')
+const { UnauthorizedException, BadRequestException } = require('../controllers/HttpExceptions')
+const { BlacklistToken } = require('../models/BlacklistToken')
 class JwtTokenService {
+    
     /**
      * 
-     * @param {string} id 
+     * @typedef {object} BlackListTokenRepository
+     * @property {(tokenData: BlacklistToken) => Promise<bool>} insertToken
+     * @property {(jti:string) => Promise<bool>} tokenExists 
      */
 
-    constructor({} = {}) {
+    /**
+     * @typedef {object} Service
+     * @property {BlackListTokenRepository} blacklistTokenRepository
+     */
+    /**
+     * 
+     * @param {Service} param0 
+     */
+    constructor({blacklistTokenRepository} = {}) {
+        this.blacklistTokenRepository = blacklistTokenRepository
+    }
 
+    async isRevoked (jti) {
+        return this.blacklistTokenRepository.tokenExists(jti)
+    } 
+
+    async invalidateToken(tokenData) {
+        const tokenExists = await this.blacklistTokenRepository.tokenExists(tokenData.jti)
+        if(tokenExists) {
+            throw new BadRequestException("You already have logged out")
+        }
+        const tokenMapped = new BlacklistToken(tokenData.jti, tokenData.id, tokenData.exp)
+        return await this.blacklistTokenRepository.insertToken(tokenMapped)
     }
     async sign(id) {
         const jti = crypto.randomUUID()
