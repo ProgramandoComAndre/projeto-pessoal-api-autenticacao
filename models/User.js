@@ -1,7 +1,8 @@
 const Email = require("../common/email-validation")
 const { BadRequestException } = require("../controllers/HttpExceptions")
+const EntitySchema = require("typeorm").EntitySchema
 
-module.exports = class User {
+class User {
     /**
      * @param {{id: number, name: string, email: string, password: string}} user
      */
@@ -33,7 +34,32 @@ module.exports = class User {
             ...user,
             id
         }
-        return new User(newUser)
-        
+        return new User(newUser)  
     }
 }
+
+const userSchema = new EntitySchema(
+    {
+        name: "User",
+        tableName: "Users",
+         columns: {
+            id: {
+                primary: true,
+                type: "text"
+            },
+            name: {
+                type: "text",
+                nullable: false
+            },
+            email: {
+                type: "text",
+                nullable: false
+            },
+            password: {
+                type: "text",
+                nullable: false
+            }
+         }
+    }
+)
+module.exports = { User, userSchema }
