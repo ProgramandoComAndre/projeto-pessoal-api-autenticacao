@@ -1,6 +1,6 @@
 const Email = require("../common/email-validation")
 const { BadRequestException, NotFoundException, UnauthorizedException } = require("../controllers/HttpExceptions")
-const User = require("../models/User")
+const {User} = require("../models/User")
 
 class AuthService {
     /**

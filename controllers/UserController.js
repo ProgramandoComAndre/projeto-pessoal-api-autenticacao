@@ -39,8 +39,8 @@ class UserController {
             if(!result.isEmpty())
                 return res.status(400).json({errors: result.array()})
             const data = matchedData(req);
-            const newUser = User.create(data)
-            await this.userService.registerUser(newUser)
+            
+            const newUser = await this.userService.registerUser(data)
             const registerUserResponse = {id: newUser.id, name: newUser.name, email: newUser.email}
             return res.status(200).json(registerUserResponse)
            
