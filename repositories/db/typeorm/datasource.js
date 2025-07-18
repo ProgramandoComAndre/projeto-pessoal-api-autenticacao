@@ -1,11 +1,13 @@
 const typeorm = require("typeorm")
 const {userSchema} = require("../../../models/User");
-const path = require("path")
+const {blacklistTokenSchema} = require("../../../models/BlacklistToken")
+const {refreshTokenSchema} = require("../../../models/RefreshToken")
+
 const dataSource = new typeorm.DataSource({
     type: "sqlite",
     database: "users.db",
     synchronize: true,
-    entities: [userSchema]
+    entities: [userSchema, blacklistTokenSchema, refreshTokenSchema]
 })
 
 async function initDB() {

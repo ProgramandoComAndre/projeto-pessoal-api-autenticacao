@@ -21,6 +21,7 @@ class AuthController {
      * @typedef {object} IAuthService
      * @property {(user: LoginRequest) => Promise<LoginResponse>} login
      * @property {(id:string) => Promise<{id: string,name: string,email:string}>} myProfile
+     * @property {(tokenData:any) => Promise<bool>} logout 
      */
     /**
      * 
@@ -88,6 +89,39 @@ class AuthController {
             }
 
         } 
+    }
+    logout() {
+        return async(req, res) => {
+            try {
+                const tokenData = req.user
+                const {refreshToken} = req.body
+                const result = await this.authService.logout(tokenData, refreshToken)
+                return res.status(200).json({success: true, message: "Logout successfully"})
+            }
+            catch(err) {
+                if(err instanceof BadRequestException) {
+                    return res.status(err.statusCode).json({success: false, message: err.message})
+                }
+
+                throw err
+            }
+        }
+    }
+
+    refreshToken() {
+        return async(req, res) => {
+            try {
+               const {refreshToken} = req.body
+               const result = await this.authService.refreshNewToken(refreshToken)
+               return res.status(200).json(result) 
+            }
+            catch(err) {
+                if(err instanceof UnauthorizedException) {
+                    return res.status(err.statusCode).json({message : err.message})
+                }
+                return res.status(500).json({message: err.message})
+            }
+        }
     }
 }
 

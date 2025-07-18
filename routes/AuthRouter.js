@@ -14,6 +14,11 @@ const authController = new AuthController(authService);
  */
 
 /**
+ * @typedef {object} RefreshTokenDto
+ * @property {string} refreshToken.required - Refresh Token
+ */
+
+/**
  * @typedef {object} LoginResponse
  * @property {string} id.required Id
  * @property {string} name.required - Name
@@ -47,4 +52,29 @@ router.post("/",authController.login())
  * @security BearerAuth
  */
 router.get("/profile", authGuard.auth(), authController.myProfile())
+
+/**
+ * POST /api/auth/logout
+ * @tags Auth
+ * @summary Get user profile by token
+ * @param {RefreshTokenDto} request.body.required - RefreshToken
+ * @returns {LoginResponse} 200 - User Found
+ * @returns {ErrorMessage} 400 - Already had logout
+ * @returns {ErrorMessage} 401 - Invalid Token!, Expired Token!
+ * @security BearerAuth
+ */
+router.post("/logout", authGuard.auth(), authController.logout())
+
+/**
+ * POST /api/auth/refresh
+ * @tags Auth
+ * @summary Refresh a new Token
+ * @param {RefreshTokenDto} request.body.required - Refresh Token
+ * @returns {LoginResponse} 200 - User Found
+ * @returns {ErrorMessage} 400 - Already had logout
+ * @returns {ErrorMessage} 401 - Invalid Token!, Expired Token!
+ * @security BearerAuth
+ */
+
+router.post("/refresh", authController.refreshToken())
 module.exports = router

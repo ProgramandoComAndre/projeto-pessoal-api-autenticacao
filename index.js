@@ -8,6 +8,8 @@ const UserService = require('./services/UserService.js');
 const AuthService = require('./services/AuthService.js');
 const AuthGuard = require('./controllers/middleware/AuthGuard.js');
 const { initDB, dataSource } = require('./repositories/db/typeorm/datasource.js');
+const { TypeOrmBlacklistTokenRepository } = require('./repositories/BlacklistTokenRepository.js');
+const { TypeOrmRefreshTokenRepository } = require('./repositories/RefreshTokenRepository.js');
 const options = {
   info: {
     version: '1.0.0',
@@ -45,6 +47,8 @@ const app = express();
 const PORT = 3000;
 
 DependencyInjectionUtil.addDb(dataSource)
+DependencyInjectionUtil.addDependency("refreshTokenRepository", TypeOrmRefreshTokenRepository)
+DependencyInjectionUtil.addDependency("blacklistTokenRepository", TypeOrmBlacklistTokenRepository)
 DependencyInjectionUtil.addDependency("userRepository", TypeOrmUserRepository)
 DependencyInjectionUtil.addDependency("hashService", BcryptHashService)
 DependencyInjectionUtil.addDependency("tokenService", JwtTokenService)
