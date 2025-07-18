@@ -65,6 +65,11 @@ const userSchema = new EntitySchema(
                 target: "BlacklistToken",
                 type: "one-to-many",
                 inverseSide: "Users"
+            },
+            refreshToken: {
+                target: "RefreshToken",
+                type: "one-to-many",
+                inverseSide: "Users"
             }
          }
     }

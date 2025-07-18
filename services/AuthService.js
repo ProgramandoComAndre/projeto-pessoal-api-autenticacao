@@ -7,6 +7,7 @@ class AuthService {
      * @typedef {object} ITokenService
      * @property {(id: string) => string} sign
      * @property {(tokenData: any) => Promise<bool>} invalidateToken
+     * @property {(userId: string)=> Promise<any>} createNewTokenPair
      */
     /**
      * @typedef {object} IUserRepository
@@ -59,8 +60,8 @@ class AuthService {
         if(!isValidPassword) {
             throw new UnauthorizedException('Wrong password')
         }
-        const token = await this.tokenService.sign(userExists.id)
-        return { id: userExists.id, name: userExists.name, email: userExists.email, token}
+        const {accessToken, refreshToken} = await this.tokenService.createNewTokenPair(userExists.id)
+        return { id: userExists.id, name: userExists.name, email: userExists.email, accessToken, refreshToken: refreshToken}
     }
     
     async myProfile(id) {
@@ -71,8 +72,14 @@ class AuthService {
         return {id: user.id, name: user.name, email: user.email}
     }
 
-    async logout(tokenData) {
+    async refreshNewToken(token) {
+        const accessToken = await this.tokenService.renewToken(token)
+        return {accessToken}
+    }
+
+    async logout(tokenData, refreshToken) {
         const result = await this.tokenService.invalidateToken(tokenData)
+        await this.tokenService.invalidateRefreshToken(refreshToken)
         return result 
     }
 }
