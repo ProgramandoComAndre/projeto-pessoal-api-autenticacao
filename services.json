@@ -1,0 +1,7 @@
+[
+    {
+        "serviceName": "orders",
+        "serviceUrl": "http://orders:3001",
+        "auth": true
+    }
+]

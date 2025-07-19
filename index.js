@@ -10,6 +10,9 @@ const AuthGuard = require('./controllers/middleware/AuthGuard.js');
 const { initDB, dataSource } = require('./repositories/db/typeorm/datasource.js');
 const { TypeOrmBlacklistTokenRepository } = require('./repositories/BlacklistTokenRepository.js');
 const { TypeOrmRefreshTokenRepository } = require('./repositories/RefreshTokenRepository.js');
+const services = require("./services.json");
+const addServices = require('./common/addServices.js');
+console.log(services)
 const options = {
   info: {
     version: '1.0.0',
@@ -59,6 +62,8 @@ DependencyInjectionUtil.addDependency("authGuard", AuthGuard)
 app.use(express.json())
 app.use("/api/users", require("./routes/UserRouter.js"))
 app.use("/api/auth", require("./routes/AuthRouter.js"))
+addServices(services, app)
+
 expressJSDocSwagger(app)(options);
 
 initDB().then(() => {
