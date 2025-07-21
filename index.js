@@ -49,6 +49,8 @@ const options = {
 const app = express();
 const PORT = 3000;
 
+const ips = {}
+
 DependencyInjectionUtil.addDb(dataSource)
 DependencyInjectionUtil.addDependency("refreshTokenRepository", TypeOrmRefreshTokenRepository)
 DependencyInjectionUtil.addDependency("blacklistTokenRepository", TypeOrmBlacklistTokenRepository)
@@ -60,6 +62,32 @@ DependencyInjectionUtil.addDependency("authService", AuthService)
 DependencyInjectionUtil.addDependency("authGuard", AuthGuard)
 
 app.use(express.json())
+app.use((req, res, next) => {
+  const window = 1
+  const maxRequests = 15
+  const now = Date.now()
+  const ip = req.ip
+  if(!ips[ip]) { // não
+    ips[ip] = { count: 1, lastRequest: now}
+  }
+  else { // sim
+    const timeSinceLastRequest = now - ips[ip].lastRequest
+    const timeLimit = window * 60 * 1000
+    if(timeSinceLastRequest < timeLimit) {
+      ips[ip].count += 1
+    }
+    else {
+      ips[ip] = { count: 1, lastRequest : now} 
+
+    }
+
+  }
+  if(ips[ip].count > maxRequests) {
+    return res.status(429).json({message: "Too many requests try again later"})
+  }
+  ips[ip].lastRequest = now
+  next()
+})
 app.use("/api/users", require("./routes/UserRouter.js"))
 app.use("/api/auth", require("./routes/AuthRouter.js"))
 addServices(services, app)
