@@ -48,32 +48,18 @@ class AuthController {
      * and sends a JSON response with a success message.
      */
     login() {
-        return async(req, res) => {
-            try {
+        return async(req, res, next) => {
             const { email, password } = req.body
             const loginResponse = await this.authService.login({email, password})
             return res.status(200).json(loginResponse)
            
-        }
-         catch(ex) {
-            if(ex instanceof BadRequestException) {
-                return res.status(ex.statusCode).json({message: ex.message})
-            }
-            else if(ex instanceof NotFoundException) {
-                return res.status(ex.statusCode).json({message: ex.message})
-            }
-            else if(ex instanceof UnauthorizedException) {
-                return res.status(ex.statusCode).json({message: ex.message})
-            }
-            else if(ex instanceof Error){
-                return res.status(500).json({message: "Internal Server Error", details: ex.stack})
-            }
-         }
+        
+         
         }
     }
 
      myProfile() {
-        return async (req, res) => {
+        return async (req, res, next) => {
 
             try {
                 const {id} = req.user
@@ -91,36 +77,25 @@ class AuthController {
         } 
     }
     logout() {
-        return async(req, res) => {
-            try {
+        return async(req, res, next) => {
+            
                 const tokenData = req.user
                 const {refreshToken} = req.body
                 const result = await this.authService.logout(tokenData, refreshToken)
-                return res.status(200).json({success: true, message: "Logout successfully"})
-            }
-            catch(err) {
-                if(err instanceof BadRequestException) {
-                    return res.status(err.statusCode).json({success: false, message: err.message})
-                }
-
-                throw err
-            }
+             return res.status(200).json({success: true, message: "Logout successfully"})
+            
+            
         }
     }
 
     refreshToken() {
-        return async(req, res) => {
-            try {
+        return async(req, res, next) => {
+            
                const {refreshToken} = req.body
                const result = await this.authService.refreshNewToken(refreshToken)
                return res.status(200).json(result) 
-            }
-            catch(err) {
-                if(err instanceof UnauthorizedException) {
-                    return res.status(err.statusCode).json({message : err.message})
-                }
-                return res.status(500).json({message: err.message})
-            }
+            
+            
         }
     }
 }
