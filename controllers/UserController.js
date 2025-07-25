@@ -33,8 +33,8 @@ class UserController {
      * and sends a JSON response with a success message.
      */
     registerUser() {
-        return async(req, res) => {
-            try {
+        return async(req, res, next) => {
+        
             const result = validationResult(req)
             if(!result.isEmpty())
                 return res.status(400).json({errors: result.array()})
@@ -44,18 +44,8 @@ class UserController {
             const registerUserResponse = {id: newUser.id, name: newUser.name, email: newUser.email}
             return res.status(200).json(registerUserResponse)
            
-        }
-         catch(ex) {
-            if(ex instanceof BadRequestException) {
-                return res.status(ex.statusCode).json({message: ex.message})
-            }
-            else if(ex instanceof ConflictException) {
-                return res.status(ex.statusCode).json({message: ex.message})
-            }
-            else if(ex instanceof Error){
-                return res.status(500).json({message: "Internal Server Error", details: ex.stack})
-            }
-         }
+        
+       
         }
     }
 }

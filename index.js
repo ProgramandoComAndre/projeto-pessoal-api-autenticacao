@@ -12,6 +12,9 @@ const { TypeOrmBlacklistTokenRepository } = require('./repositories/BlacklistTok
 const { TypeOrmRefreshTokenRepository } = require('./repositories/RefreshTokenRepository.js');
 const services = require("./services.json");
 const addServices = require('./common/addServices.js');
+const logMiddleware = require('./controllers/middleware/LogMiddleware.js');
+const LogService = require('./services/LogService.js');
+const FileTransport = require('./services/transporters/FileTransporter.js');
 console.log(services)
 const options = {
   info: {
@@ -61,9 +64,13 @@ DependencyInjectionUtil.addDependency("userService", UserService)
 DependencyInjectionUtil.addDependency("authService", AuthService)
 DependencyInjectionUtil.addDependency("authGuard", AuthGuard)
 
+const logService = new LogService(new FileTransport("logs"))
+
 app.use(express.json())
+
 app.use((req, res, next) => {
   const window = 1
+  
   const maxRequests = 15
   const now = Date.now()
   const ip = req.ip
@@ -88,11 +95,17 @@ app.use((req, res, next) => {
   ips[ip].lastRequest = now
   next()
 })
+
+
+
+
 app.use("/api/users", require("./routes/UserRouter.js"))
 app.use("/api/auth", require("./routes/AuthRouter.js"))
+app.use(logMiddleware(logService))
 addServices(services, app)
 
 expressJSDocSwagger(app)(options);
+
 
 initDB().then(() => {
   app.listen(PORT, () => console.log(`API Docs at http://localhost:${PORT}/docs`));

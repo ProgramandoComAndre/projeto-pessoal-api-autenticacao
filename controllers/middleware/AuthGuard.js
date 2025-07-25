@@ -32,7 +32,9 @@ class AuthGuard {
 
     auth() {
         return async (req, res, next) => {
-           try {
+           
+
+            throw new Error("Something is wrong")
             if(!req.headers.authorization) {
                 throw new UnauthorizedException("Invalid Token!!")
             }
@@ -45,13 +47,7 @@ class AuthGuard {
             }
             req.user = tokenPayload
             next()
-           }
-           catch(error) {
-               if(error instanceof UnauthorizedException)
-                return res.status(error.statusCode).json({message: error.message})
-
-               return res.status(500).json({message: "Internal Server Error", details: error.message})
-           }
+           
         }
     }
 }
