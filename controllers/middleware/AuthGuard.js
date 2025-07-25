@@ -34,7 +34,6 @@ class AuthGuard {
         return async (req, res, next) => {
            
 
-            throw new Error("Something is wrong")
             if(!req.headers.authorization) {
                 throw new UnauthorizedException("Invalid Token!!")
             }
